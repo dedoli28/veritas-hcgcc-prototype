@@ -41,7 +41,7 @@ export default function Nav() {
         <ul className="hidden items-center gap-1 lg:flex">
           {links.map(([id, label]) => (
             <li key={id}>
-              <a href={`#${id}`} className="rounded-lg px-2.5 py-2 text-sm font-semibold text-muted hover:bg-surface2 hover:text-fg">
+              <a href={`#${id}`} className="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-semibold text-muted hover:bg-surface2 hover:text-fg">
                 {label}
               </a>
             </li>
