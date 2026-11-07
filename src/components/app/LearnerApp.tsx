@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Check, Volume2, VolumeX, Crown, FlaskConical, Flame, Lock, Moon, Star, Sun, Trophy, User, X } from "lucide-react";
 import { units, allLessons, type Lesson } from "@/data/course";
@@ -52,6 +52,11 @@ export default function LearnerApp() {
   const [leaving, setLeaving] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
   const [dismissed, setDismissed] = useState("");
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }, []);
 
   const goalPct = Math.min(100, (xp / DAILY_GOAL_XP) * 100);
 
@@ -169,16 +174,16 @@ export default function LearnerApp() {
 
   return (
     <div className={`flex min-h-[100dvh] flex-col ${back ? "screen-left" : "screen-up"}`}>
-      <header className="sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur">
-        <div className="mx-auto flex max-w-2xl items-center justify-between gap-2 px-4 py-2">
+      <header className="safe-t sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur">
+        <div className="mx-auto flex max-w-2xl items-center justify-between gap-2 px-4 py-2.5">
           <span className="flex items-center gap-2 font-brand text-xl text-primary"><Logo height={26} />English</span>
           <div className="flex items-center gap-3 text-base font-bold">
             <span className="flex items-center gap-1" aria-label={`${streak} day streak`}><Flame aria-hidden="true" className="m-flame h-5 w-5 text-accent" /><CountUp value={streak} /></span>
             <span className="flex items-center gap-1" aria-label={`${xp} XP today`}><Star aria-hidden="true" className="h-5 w-5 text-accent" /><CountUp value={xp} /></span>
-            <button className="btn !min-h-[40px] !px-2" onClick={() => { const m = !isMuted(); setMuted(m); setMute(m); if (!m) play("tap"); }} aria-label={mute ? "Turn sound on" : "Turn sound off"} aria-pressed={mute}>
+            <button className="btn !hidden !min-h-[44px] !px-3 sm:!inline-flex" onClick={() => { const m = !isMuted(); setMuted(m); setMute(m); if (!m) play("tap"); }} aria-label={mute ? "Turn sound on" : "Turn sound off"} aria-pressed={mute}>
               {mute ? <VolumeX aria-hidden="true" className="h-4 w-4" /> : <Volume2 aria-hidden="true" className="h-4 w-4" />}
             </button>
-            <button className="btn !min-h-[40px] !px-2" onClick={toggleTheme} aria-label="Toggle theme">
+            <button className="btn !hidden !min-h-[44px] !px-3 sm:!inline-flex" onClick={toggleTheme} aria-label="Toggle theme">
               {dark ? <Sun key="sun" aria-hidden="true" className="m-spin-in h-4 w-4" /> : <Moon key="moon" aria-hidden="true" className="m-spin-in h-4 w-4" />}
             </button>
           </div>
@@ -190,7 +195,7 @@ export default function LearnerApp() {
           <Collapse show={dismissed !== toast}>
             <p className="m-item mb-4 flex items-start justify-between gap-2 rounded-xl bg-wsoft p-3 text-base font-semibold text-warn" role="status">
               <span>{toast}</span>
-              <button onClick={dismissToast} aria-label="Dismiss message"><X aria-hidden="true" className="h-5 w-5" /></button>
+              <button onClick={dismissToast} aria-label="Dismiss message" className="-m-2 p-2"><X aria-hidden="true" className="h-5 w-5" /></button>
             </p>
           </Collapse>
         )}
@@ -205,7 +210,7 @@ export default function LearnerApp() {
                   const today = i === 6;
                   return (
                     <li key={i} className="flex flex-col items-center gap-1 text-sm font-bold text-muted">
-                      <span className={`flex h-9 w-9 items-center justify-center rounded-full border-2 ${filled ? "border-accent bg-accent text-onaccent" : "border-line"} ${today ? "ring-2 ring-primary" : ""}`} aria-label={`${d}${today ? " (today)" : ""}: ${filled ? "practiced" : "not yet"}`}>
+                      <span className={`flex h-8 w-8 items-center justify-center rounded-full border-2 sm:h-9 sm:w-9 ${filled ? "border-accent bg-accent text-onaccent" : "border-line"} ${today ? "ring-2 ring-primary" : ""}`} aria-label={`${d}${today ? " (today)" : ""}: ${filled ? "practiced" : "not yet"}`}>
                         {filled ? <Flame aria-hidden="true" className="h-5 w-5" /> : null}
                       </span>
                       {d}
@@ -226,7 +231,7 @@ export default function LearnerApp() {
                   <p className="text-sm font-bold uppercase opacity-90">{u.title}</p>
                   <h2 className="text-xl font-extrabold">{u.subtitle}</h2>
                 </Reveal>
-                <ol className="mt-4 flex flex-col items-center gap-4">
+                <ol className={`mt-4 flex flex-col items-center gap-4 ${u.lessons.some((l) => l.id === firstOpen) ? "pt-9" : ""}`}>
                   {u.lessons.map((l, i) => {
                     const isDone = completed.has(l.id);
                     const open = isDone || l.id === firstOpen;
@@ -284,6 +289,14 @@ export default function LearnerApp() {
                 <span className="text-base font-bold">Learner is under 18</span>
                 <Toggle checked={minor} onChange={() => setMinor((v) => !v)} label="Learner is under 18" />
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-base font-bold">Sound effects</span>
+                <Toggle checked={!mute} onChange={() => { const m = !isMuted(); setMuted(m); setMute(m); if (!m) play("tap"); }} label="Sound effects" />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-base font-bold">Dark theme</span>
+                <Toggle checked={!!dark} onChange={toggleTheme} label="Dark theme" />
+              </div>
               <p className="text-sm text-muted">Minor profiles never see purchase offers. Family purchases are parent-managed.</p>
               <div>
                 <label htmlFor="exam" className="text-base font-bold">Exam date (optional)</label>
@@ -298,7 +311,7 @@ export default function LearnerApp() {
 
       <footer className="border-t border-line bg-surface2 px-4 py-4 pb-24 text-center text-sm text-muted">{FOOTER_TEXT}</footer>
 
-      <nav aria-label="App" className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface">
+      <nav aria-label="App" className="safe-b fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface">
         <ul className="relative mx-auto flex max-w-2xl">
           <li aria-hidden="true" className="nav-indicator absolute left-0 top-0 h-1 w-1/3 px-6" style={{ transform: `translateX(${tabs.findIndex(([id]) => id === tab) * 100}%)` }}>
             <span className="block h-1 rounded-full bg-primary" />
@@ -313,13 +326,14 @@ export default function LearnerApp() {
         </ul>
       </nav>
 
-      <button className="btn fixed bottom-20 right-3 z-30 shadow-lg" onClick={() => setDemo(true)} aria-label="Open demo controls">
-        <FlaskConical aria-hidden="true" className="h-4 w-4" /> Demo
+      <button className="btn fixed right-3 z-30 !min-h-[44px] !px-3 shadow-lg" style={{ bottom: "calc(72px + env(safe-area-inset-bottom))" }} onClick={() => setDemo(true)} aria-label="Open demo controls">
+        <FlaskConical aria-hidden="true" className="h-5 w-5" /> <span className="hidden sm:inline">Demo</span>
       </button>
 
       {offer?.offer && (
-        <div className="m-backdrop fixed inset-0 z-40 flex items-end justify-center bg-black/50 p-3 sm:items-center" role="dialog" aria-modal="true" aria-label="Optional offer">
-          <div className={`m-sheet w-full max-w-md rounded-3xl bg-surface p-5 ${leaving ? "leaving" : ""}`}>
+        <div className="m-backdrop fixed inset-0 z-40 flex items-end justify-center bg-black/50 sm:items-center sm:p-3" role="dialog" aria-modal="true" aria-label="Optional offer">
+          <div className={`m-sheet w-full max-w-md rounded-t-3xl bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:rounded-3xl ${leaving ? "leaving" : ""}`}>
+            <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-line sm:hidden" aria-hidden="true" />
             <h2 className="text-xl font-extrabold">{offer.offer.title}</h2>
             <p className="mt-1 text-base text-muted">{offer.offer.body}</p>
             <div className="mt-4 grid gap-2">
@@ -336,11 +350,12 @@ export default function LearnerApp() {
         const flow = flows[m.checkout];
         const last = step === flow.steps.length - 1;
         return (
-          <div className="m-backdrop fixed inset-0 z-40 flex items-end justify-center bg-black/50 p-3 sm:items-center" role="dialog" aria-modal="true" aria-label="Checkout mock">
-            <div className="m-sheet max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-3xl bg-surface p-5">
+          <div className="m-backdrop fixed inset-0 z-40 flex items-end justify-center bg-black/50 sm:items-center sm:p-3" role="dialog" aria-modal="true" aria-label="Checkout mock">
+            <div className="m-sheet sheet-scroll max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:rounded-3xl">
+              <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-line sm:hidden" aria-hidden="true" />
               <div className="flex items-start justify-between">
                 <h2 className="text-xl font-extrabold">{checkout}: checkout mock</h2>
-                <button onClick={() => setCheckout(null)} aria-label="Close checkout"><X aria-hidden="true" className="h-6 w-6" /></button>
+                <button onClick={() => setCheckout(null)} aria-label="Close checkout" className="-m-2 p-2"><X aria-hidden="true" className="h-6 w-6" /></button>
               </div>
               <p className="text-sm text-muted">No real payment, nothing collected.</p>
               <label htmlFor="mk" className="mt-3 block text-base font-bold">Your market</label>
@@ -361,10 +376,10 @@ export default function LearnerApp() {
       })()}
 
       {demo && (
-        <aside className="screen-right fixed inset-y-0 right-0 z-50 w-full max-w-sm overflow-y-auto border-l border-line bg-surface p-4 shadow-2xl" aria-label="Demo controls">
+        <aside className="screen-right sheet-scroll safe-t safe-b fixed inset-y-0 right-0 z-50 w-full max-w-sm overflow-y-auto border-l border-line bg-surface p-4 shadow-2xl" aria-label="Demo controls">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-extrabold">Demo controls</h2>
-            <button onClick={() => setDemo(false)} aria-label="Close demo controls"><X aria-hidden="true" className="h-6 w-6" /></button>
+            <button onClick={() => setDemo(false)} aria-label="Close demo controls" className="-m-2 p-2"><X aria-hidden="true" className="h-6 w-6" /></button>
           </div>
           <p className="mt-1 text-sm text-muted">Simulated day {day}. Last offer: {lastOfferDay === null ? "none" : `day ${lastOfferDay}`}.</p>
           <div className="mt-3 flex flex-wrap gap-2">

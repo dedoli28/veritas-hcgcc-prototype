@@ -102,6 +102,27 @@
 
 html {
   scroll-padding-top: 5rem;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+button,
+a,
+[role="radio"],
+[role="switch"],
+summary {
+  touch-action: manipulation;
+}
+body {
+  overscroll-behavior-y: none;
+}
+.safe-t {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-b {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.sheet-scroll {
+  overscroll-behavior: contain;
 }
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -148,10 +169,12 @@ body {
     border-color var(--dur) var(--ease-out),
     color var(--dur) var(--ease-out);
 }
-.btn:hover:not(:disabled) {
-  border-color: var(--primary);
-  transform: translateY(-1px);
-  box-shadow: 0 5px 0 var(--edge);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 var(--edge);
+  }
 }
 .btn:active:not(:disabled) {
   transform: translateY(4px);

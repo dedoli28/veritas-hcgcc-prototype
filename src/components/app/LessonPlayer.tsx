@@ -75,9 +75,9 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
   };
 
   return (
-    <div className="mx-auto flex min-h-[100dvh] w-full max-w-2xl flex-col px-4 py-4">
+    <div className="mx-auto flex min-h-[100dvh] w-full max-w-2xl flex-col px-4 pb-0 pt-[calc(0.75rem+env(safe-area-inset-top))]">
       <div className="flex items-center gap-3">
-        <button onClick={onExit} className="rounded-lg p-2 text-muted hover:bg-surface2" aria-label="Quit lesson">
+        <button onClick={onExit} className="-m-1 rounded-lg p-3 text-muted hover:bg-surface2" aria-label="Quit lesson">
           <X aria-hidden="true" className="h-6 w-6" />
         </button>
         <div className="h-4 flex-1 overflow-hidden rounded-full bg-surface2" role="progressbar" aria-label="Lesson progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}>
@@ -167,7 +167,7 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
 
       <div
         key={status}
-        className={`relative -mx-4 border-t-2 px-4 py-4 ${status !== "answering" ? "panel-in" : ""} ${status === "right" ? "border-primary bg-psoft" : status === "wrong" ? "border-danger bg-dsoft" : "border-line"}`}
+        className={`sticky bottom-0 z-10 -mx-4 border-t-2 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 ${status !== "answering" ? "panel-in" : ""} ${status === "right" ? "border-primary bg-psoft" : status === "wrong" ? "border-danger bg-dsoft" : "border-line bg-bg"}`}
         role="status"
         aria-live="polite"
       >
