@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, Check, Crown, FlaskConical, Flame, Lock, Moon, Star, Sun, Trophy, User, X } from "lucide-react";
+import { BookOpen, Check, Volume2, VolumeX, Crown, FlaskConical, Flame, Lock, Moon, Star, Sun, Trophy, User, X } from "lucide-react";
 import { units, allLessons, type Lesson } from "@/data/course";
 import { markets } from "@/data/levers";
 import { FOOTER_TEXT } from "@/data/case";
 import { evaluateOffer, moments, type Moment, type MomentId } from "@/lib/guardrails";
 import { DAILY_GOAL_XP, XP_PER_CORRECT, XP_PER_LESSON } from "@/lib/lesson";
 import { flows, FakeQr } from "@/components/LocalPricing";
+import Logo from "@/components/Logo";
+import { isMuted, play, setMuted } from "@/lib/sound";
 import LessonPlayer, { type LessonResult } from "./LessonPlayer";
 
 type Tab = "learn" | "plans" | "profile";
@@ -43,6 +45,7 @@ export default function LearnerApp() {
   const [checkout, setCheckout] = useState<string | null>(null);
   const [market, setMarket] = useState(markets[1].id);
   const [step, setStep] = useState(0);
+  const [mute, setMute] = useState(false);
 
   const goalPct = Math.min(100, (xp / DAILY_GOAL_XP) * 100);
 
@@ -58,6 +61,7 @@ export default function LearnerApp() {
     setLog((l) => [{ id: l.length + 1, day, text: `${m.button}: ${d.reason}`, shown: d.show }, ...l]);
     if (d.show) {
       setOffer(m);
+      play("offer");
       setLastOfferDay(day);
       setToast("");
     } else {
@@ -133,10 +137,13 @@ export default function LearnerApp() {
     <div className="flex min-h-[100dvh] flex-col">
       <header className="sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-2 px-4 py-2">
-          <span className="font-brand text-xl text-primary">Veritas English</span>
+          <span className="flex items-center gap-2 font-brand text-xl text-primary"><Logo size={34} />Veritas English</span>
           <div className="flex items-center gap-3 text-base font-bold">
             <span className="flex items-center gap-1" aria-label={`${streak} day streak`}><Flame aria-hidden="true" className="h-5 w-5 text-accent" />{streak}</span>
             <span className="flex items-center gap-1" aria-label={`${xp} XP today`}><Star aria-hidden="true" className="h-5 w-5 text-accent" />{xp}</span>
+            <button className="btn !min-h-[40px] !px-2" onClick={() => { const m = !isMuted(); setMuted(m); setMute(m); if (!m) play("tap"); }} aria-label={mute ? "Turn sound on" : "Turn sound off"} aria-pressed={mute}>
+              {mute ? <VolumeX aria-hidden="true" className="h-4 w-4" /> : <Volume2 aria-hidden="true" className="h-4 w-4" />}
+            </button>
             <button className="btn !min-h-[40px] !px-2" onClick={toggleTheme} aria-label="Toggle theme">
               {dark ? <Sun aria-hidden="true" className="h-4 w-4" /> : <Moon aria-hidden="true" className="h-4 w-4" />}
             </button>

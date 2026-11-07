@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CheckCircle2, X, XCircle } from "lucide-react";
 import type { Lesson } from "@/data/course";
+import { play } from "@/lib/sound";
 import { correctText, isCorrect, shuffle } from "@/lib/lesson";
 
 export type LessonResult = { correct: number; total: number };
@@ -26,10 +27,12 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
   const check = () => {
     const ok = isCorrect(q, answer);
     setStatus(ok ? "right" : "wrong");
+    play(ok ? "correct" : "wrong");
     if (ok) setCorrect((c) => c + 1);
   };
   const next = () => {
     if (idx + 1 >= total) {
+      play("complete");
       onFinish({ correct: correct, total });
       return;
     }
@@ -61,7 +64,7 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
         {q.type === "choose" && (
           <div role="radiogroup" aria-label="Answers" className="mt-6 grid gap-3">
             {options.map((o) => (
-              <button key={o} role="radio" aria-checked={picked === o} disabled={locked} onClick={() => setPicked(o)} className={`rounded-2xl border-2 border-b-4 p-4 text-left text-lg font-semibold ${picked === o ? "border-primary bg-psoft" : "border-line bg-surface"}`}>
+              <button key={o} role="radio" aria-checked={picked === o} disabled={locked} onClick={() => { play("tap"); setPicked(o); }} className={`rounded-2xl border-2 border-b-4 p-4 text-left text-lg font-semibold ${picked === o ? "border-primary bg-psoft" : "border-line bg-surface"}`}>
                 {o}
               </button>
             ))}
@@ -73,7 +76,7 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
             <p className="mt-6 rounded-2xl border-2 border-line bg-surface p-4 text-xl font-semibold">{q.sentence.replace("___", picked ? `[ ${picked} ]` : "_____")}</p>
             <div role="radiogroup" aria-label="Choices" className="mt-4 flex flex-wrap gap-3">
               {options.map((o) => (
-                <button key={o} role="radio" aria-checked={picked === o} disabled={locked} onClick={() => setPicked(o)} className={`rounded-2xl border-2 border-b-4 px-5 py-3 text-lg font-semibold ${picked === o ? "border-primary bg-psoft" : "border-line bg-surface"}`}>
+                <button key={o} role="radio" aria-checked={picked === o} disabled={locked} onClick={() => { play("tap"); setPicked(o); }} className={`rounded-2xl border-2 border-b-4 px-5 py-3 text-lg font-semibold ${picked === o ? "border-primary bg-psoft" : "border-line bg-surface"}`}>
                   {o}
                 </button>
               ))}

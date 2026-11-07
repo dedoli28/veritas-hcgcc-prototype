@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Logo from "./Logo";
 import { useEffect, useState } from "react";
-import { Menu, Moon, Sun, X, Sprout } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 
 const links = [
   ["problem", "Problem"],
@@ -36,7 +37,7 @@ export default function Nav() {
     <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur">
       <nav aria-label="Main" className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
         <Link href="/" className="flex min-h-[44px] items-center gap-2 font-extrabold">
-          <Sprout aria-hidden="true" className="h-6 w-6 text-primary" />
+          <Logo size={30} />
           Veritas Prototype
         </Link>
         <ul className="hidden items-center gap-1 lg:flex">
