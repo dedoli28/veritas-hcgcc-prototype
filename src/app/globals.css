@@ -1,26 +1,196 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f7faf7;
+  --surface: #ffffff;
+  --surface-2: #eef5ef;
+  --fg: #0f1f17;
+  --muted: #475a50;
+  --line: #d3e0d6;
+  --primary: #15803d;
+  --primary-fg: #ffffff;
+  --primary-soft: #dcfce7;
+  --accent: #fcd34d;
+  --accent-fg: #3b2f00;
+  --danger: #b91c1c;
+  --danger-soft: #fee2e2;
+  --warn: #92400e;
+  --warn-soft: #fef3c7;
+  --ok-soft: #dcfce7;
+  --c1: #15803d;
+  --c2: #ca8a04;
+  --c3: #0f766e;
+  --c4: #64748b;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root[data-theme="dark"] {
+  --bg: #0a120f;
+  --surface: #121e19;
+  --surface-2: #19291f;
+  --fg: #e9f2ed;
+  --muted: #a6b8ae;
+  --line: #2a3d32;
+  --primary: #4ade80;
+  --primary-fg: #06210f;
+  --primary-soft: #14301f;
+  --accent: #fbbf24;
+  --accent-fg: #2b2100;
+  --danger: #fca5a5;
+  --danger-soft: #3b1414;
+  --warn: #fcd34d;
+  --warn-soft: #3a2a08;
+  --ok-soft: #14301f;
+  --c1: #4ade80;
+  --c2: #fbbf24;
+  --c3: #2dd4bf;
+  --c4: #94a3b8;
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --bg: #0a120f;
+    --surface: #121e19;
+    --surface-2: #19291f;
+    --fg: #e9f2ed;
+    --muted: #a6b8ae;
+    --line: #2a3d32;
+    --primary: #4ade80;
+    --primary-fg: #06210f;
+    --primary-soft: #14301f;
+    --accent: #fbbf24;
+    --accent-fg: #2b2100;
+    --danger: #fca5a5;
+    --danger-soft: #3b1414;
+    --warn: #fcd34d;
+    --warn-soft: #3a2a08;
+    --ok-soft: #14301f;
+    --c1: #4ade80;
+    --c2: #fbbf24;
+    --c3: #2dd4bf;
+    --c4: #94a3b8;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-onprimary: var(--primary-fg);
+  --color-psoft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-onaccent: var(--accent-fg);
+  --color-danger: var(--danger);
+  --color-dsoft: var(--danger-soft);
+  --color-warn: var(--warn);
+  --color-wsoft: var(--warn-soft);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1.1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--fg);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.btn:hover {
+  border-color: var(--primary);
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-fg);
+  border-color: var(--primary);
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+.btn[aria-pressed="true"],
+.btn[aria-checked="true"] {
+  background: var(--primary);
+  color: var(--primary-fg);
+  border-color: var(--primary);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--surface-2);
+  color: var(--fg);
+  border: 1px solid var(--line);
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+  height: 28px;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.recharts-wrapper:focus,
+.recharts-surface:focus {
+  outline: none;
 }
