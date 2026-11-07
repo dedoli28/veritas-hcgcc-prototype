@@ -1,0 +1,84 @@
+/* Motion system. Shared durations and easings live in :root of globals.css.
+   Animations use transform and opacity (plus a small box-shadow on 3D buttons and grid-rows for collapse). */
+
+@keyframes m-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes m-right { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes m-left { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@keyframes m-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes m-sheet { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes m-sheet-out { to { transform: translateX(110%); opacity: 0; } }
+@keyframes m-pop { 0% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes m-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes m-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes m-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+@keyframes m-shake-sm { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+@keyframes m-flame { 0%, 100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.1) rotate(-4deg); } 65% { transform: scale(0.96) rotate(3deg); } }
+@keyframes m-bump { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
+@keyframes m-bounce { 0% { transform: translateY(0) scale(1); } 40% { transform: translateY(-7px) scale(1.12); } 100% { transform: translateY(0) scale(1); } }
+@keyframes m-pulse-ok { 0% { transform: scale(1.02); } 50% { transform: scale(1.06); } 100% { transform: scale(1.02); } }
+@keyframes m-shine { from { transform: translateX(-120%); } to { transform: translateX(260%); } }
+@keyframes m-floatup { 0% { opacity: 0; transform: translateY(8px) scale(0.8); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-44px) scale(1.1); } }
+@keyframes m-draw { to { stroke-dashoffset: 0; } }
+@keyframes m-spin-in { from { transform: rotate(-90deg) scale(0.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes m-skeleton { from { opacity: 0.5; } to { opacity: 1; } }
+
+.screen-up { animation: m-up var(--dur) var(--ease-out) both; }
+.screen-right { animation: m-right var(--dur) var(--ease-out) both; }
+.screen-left { animation: m-left var(--dur) var(--ease-out) both; }
+.m-backdrop { animation: m-fade var(--dur) var(--ease-out) both; }
+.m-sheet { animation: m-sheet var(--dur-slow) var(--ease-out) both; }
+.m-sheet.leaving { animation: m-sheet-out var(--dur) var(--ease-out) both; }
+.m-pop { animation: m-pop var(--dur-slow) var(--ease-spring) both; }
+.m-item { animation: m-up var(--dur) var(--ease-out) both; }
+.m-card-in { animation: m-right var(--dur) var(--ease-out) both; }
+.m-bob { animation: m-bob 1.6s ease-in-out infinite; }
+.m-float { animation: m-float 1.4s ease-in-out infinite; }
+.m-shake { animation: m-shake var(--dur-slow) ease-out both; }
+.m-shake-sm { animation: m-shake-sm var(--dur) ease-out 2 both; }
+.m-flame { animation: m-flame 1.8s ease-in-out infinite; transform-origin: 50% 80%; }
+.m-bump { animation: m-bump var(--dur-slow) var(--ease-spring) both; }
+.m-bounce { animation: m-bounce var(--dur-slow) var(--ease-spring) both; }
+.m-pulse-ok { animation: m-pulse-ok var(--dur-slow) var(--ease-out) 1 both; }
+.m-floatup { animation: m-floatup 900ms var(--ease-out) both; }
+.m-spin-in { animation: m-spin-in var(--dur-slow) var(--ease-spring) both; }
+.m-draw { stroke-dasharray: 26; stroke-dashoffset: 26; animation: m-draw var(--dur) var(--ease-out) 80ms forwards; }
+.m-glow { box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 45%, transparent); }
+
+.reveal { opacity: 0; transform: translateY(-14px); transition: opacity var(--dur) var(--ease-out), transform var(--dur-slow) var(--ease-out); }
+.reveal.in-view { opacity: 1; transform: none; }
+
+.bar-fill { transform-origin: left center; transition: transform var(--dur-slow) var(--ease-out); will-change: transform; }
+.shine { position: relative; overflow: hidden; }
+.shine::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent); transform: translateX(-120%); }
+.shine.go::after, .shine.always::after { animation: m-shine 900ms var(--ease-out) 1 both; }
+
+.collapse { display: grid; grid-template-rows: 1fr; transition: grid-template-rows var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out); }
+.collapse.closed { grid-template-rows: 0fr; opacity: 0; }
+.collapse > div { overflow: hidden; min-height: 0; }
+
+.nav-indicator { transition: transform var(--dur) var(--ease-spring); }
+.tab-label { transition: color var(--dur) var(--ease-out); }
+
+.toggle { position: relative; width: 52px; height: 30px; border-radius: 999px; background: var(--line); transition: background-color var(--dur) var(--ease-out); flex-shrink: 0; }
+.toggle[aria-checked="true"] { background: var(--primary); }
+.toggle > span { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 999px; background: #fff; transition: transform var(--dur) var(--ease-spring); }
+.toggle[aria-checked="true"] > span { transform: translateX(22px); }
+
+.skeleton { background: var(--surface-2); border-radius: 0.75rem; animation: m-skeleton 700ms ease-in-out infinite alternate; }
+
+.option { transition: transform var(--dur-fast) var(--ease-spring), border-color var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+.option.picked { transform: scale(1.02); }
+.panel-in { animation: m-sheet var(--dur) var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .m-flame, .m-bob, .m-float, .confetti-piece, .m-floatup, .skeleton { animation: none !important; }
+  .reveal { opacity: 1; transform: none; }
+  .m-draw { stroke-dashoffset: 0; }
+}

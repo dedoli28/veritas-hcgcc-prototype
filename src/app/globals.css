@@ -1,6 +1,12 @@
 @import "tailwindcss";
+@import "./motion.css";
 
 :root {
+  --dur-fast: 150ms;
+  --dur: 250ms;
+  --dur-slow: 400ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --bg: #f7faf7;
   --surface: #ffffff;
   --surface-2: #eef5ef;
@@ -115,6 +121,7 @@ body {
   outline: 3px solid var(--primary);
   outline-offset: 2px;
   border-radius: 4px;
+  transition: outline-offset var(--dur-fast) var(--ease-out);
 }
 
 .btn {
@@ -131,15 +138,38 @@ body {
   background: var(--surface);
   color: var(--fg);
   cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s;
+  --edge: var(--line);
+  box-shadow: 0 4px 0 var(--edge);
+  transform: translateY(0);
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast) var(--ease-out),
+    background-color var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out),
+    color var(--dur) var(--ease-out);
 }
-.btn:hover {
+.btn:hover:not(:disabled) {
   border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 var(--edge);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--edge);
+  transition-duration: 60ms;
 }
 .btn-primary {
   background: var(--primary);
   color: var(--primary-fg);
   border-color: var(--primary);
+  --edge: color-mix(in srgb, var(--primary) 55%, black);
+}
+.btn-primary:disabled {
+  background: var(--surface-2);
+  color: var(--muted);
+  border-color: var(--line);
+  --edge: var(--line);
+  opacity: 1;
 }
 .btn-primary:hover {
   filter: brightness(1.08);
@@ -182,14 +212,6 @@ input[type="range"] {
   cursor: pointer;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
-  }
-}
 
 .recharts-wrapper:focus,
 .recharts-surface:focus {

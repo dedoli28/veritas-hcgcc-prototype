@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { CheckCircle2, Snail, Volume2, X, XCircle } from "lucide-react";
 import type { Lesson } from "@/data/course";
 import { canSpeak, play, speak } from "@/lib/sound";
-import { correctText, isCorrect, shuffle } from "@/lib/lesson";
+import { correctText, isCorrect, shuffle, XP_PER_CORRECT } from "@/lib/lesson";
+import { SmoothBar } from "./motion";
 
 export type LessonResult = { correct: number; total: number };
 
@@ -57,6 +58,14 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
   };
 
   const locked = status !== "answering";
+  const optCls = (o: string) =>
+    picked === o
+      ? status === "wrong"
+        ? "border-danger bg-dsoft m-shake"
+        : status === "right"
+          ? "border-primary bg-psoft m-pulse-ok m-glow"
+          : "border-primary bg-psoft picked m-glow"
+      : "border-line bg-surface";
   const pick = (o: string) => {
     play("tap");
     setPicked(o);
@@ -72,20 +81,20 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
           <X aria-hidden="true" className="h-6 w-6" />
         </button>
         <div className="h-4 flex-1 overflow-hidden rounded-full bg-surface2" role="progressbar" aria-label="Lesson progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}>
-          <div className="h-4 rounded-full bg-primary transition-[width]" style={{ width: `${progress * 100}%` }} />
+          <SmoothBar pct={progress * 100} className="h-4 bg-primary" />
         </div>
         <span className="text-sm font-bold text-muted">{Math.min(pos + 1, queue.length)}/{queue.length}</span>
       </div>
       <p className="mt-2 text-center text-sm text-muted">Focus mode: offers never appear during a lesson.</p>
 
-      <div className="flex-1 py-6">
+      <div key={pos} className="m-card-in flex-1 py-6">
         {reviewing && <p className="mb-2 inline-block rounded-full bg-wsoft px-3 py-1 text-sm font-bold text-warn">Let’s try that one again</p>}
         <h2 className="text-2xl font-extrabold">{q.prompt}</h2>
 
         {q.type === "choose" && (
           <div role="radiogroup" aria-label="Answers" className="mt-6 grid gap-3">
-            {options.map((o) => (
-              <button key={o} role="radio" aria-checked={picked === o} disabled={locked} onClick={() => pick(o)} className={`rounded-2xl border-2 border-b-4 p-4 text-left text-lg font-semibold ${picked === o ? "border-primary bg-psoft" : "border-line bg-surface"}`}>
+            {options.map((o, oi) => (
+              <button key={o} role="radio" aria-checked={picked === o} disabled={locked} onClick={() => pick(o)} className={`rounded-2xl border-2 border-b-4 p-4 text-left text-lg font-semibold ${optCls(o)} option m-item`} style={{ animationDelay: `${oi * 50}ms`, animationFillMode: "backwards" }}>
                 {o}
               </button>
             ))}
@@ -96,8 +105,8 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
           <>
             <p className="mt-6 rounded-2xl border-2 border-line bg-surface p-4 text-xl font-semibold">{q.sentence.replace("___", picked ? `[ ${picked} ]` : "_____")}</p>
             <div role="radiogroup" aria-label="Choices" className="mt-4 flex flex-wrap gap-3">
-              {options.map((o) => (
-                <button key={o} role="radio" aria-checked={picked === o} disabled={locked} onClick={() => pick(o)} className={`rounded-2xl border-2 border-b-4 px-5 py-3 text-lg font-semibold ${picked === o ? "border-primary bg-psoft" : "border-line bg-surface"}`}>
+              {options.map((o, oi) => (
+                <button key={o} role="radio" aria-checked={picked === o} disabled={locked} onClick={() => pick(o)} className={`rounded-2xl border-2 border-b-4 px-5 py-3 text-lg font-semibold ${optCls(o)} option m-item`} style={{ animationDelay: `${oi * 50}ms`, animationFillMode: "backwards" }}>
                   {o}
                 </button>
               ))}
@@ -157,14 +166,18 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
       </div>
 
       <div
-        className={`-mx-4 border-t-2 px-4 py-4 ${status === "right" ? "border-primary bg-psoft" : status === "wrong" ? "border-danger bg-dsoft" : "border-line"}`}
+        key={status}
+        className={`relative -mx-4 border-t-2 px-4 py-4 ${status !== "answering" ? "panel-in" : ""} ${status === "right" ? "border-primary bg-psoft" : status === "wrong" ? "border-danger bg-dsoft" : "border-line"}`}
         role="status"
         aria-live="polite"
       >
         {status === "right" && (
           <p className="mb-3 flex items-center gap-2 text-lg font-extrabold text-primary">
-            <CheckCircle2 aria-hidden="true" className="h-6 w-6" /> {run >= 3 ? `Correct! ${run} in a row` : "Correct!"}
+            <CheckCircle2 aria-hidden="true" className="h-6 w-6" /> {run >= 3 ? `Nice! ${run} in a row` : "Nice!"}
           </p>
+        )}
+        {status === "right" && !missed.has(qi) && (
+          <span className="m-floatup pointer-events-none absolute right-6 top-2 text-xl font-extrabold text-primary" aria-hidden="true">+{XP_PER_CORRECT} XP</span>
         )}
         {status === "wrong" && (
           <div className="mb-3 text-danger">
