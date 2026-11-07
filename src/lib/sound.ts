@@ -57,3 +57,15 @@ export function play(name: Sfx) {
       break;
   }
 }
+
+export const canSpeak = () => typeof window !== "undefined" && "speechSynthesis" in window;
+
+/** Reads English text aloud with the browser's built-in speech synthesis. */
+export function speak(text: string, slow = false) {
+  if (!canSpeak()) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US";
+  u.rate = slow ? 0.6 : 0.95;
+  window.speechSynthesis.speak(u);
+}

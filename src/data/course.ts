@@ -4,7 +4,8 @@ export type Question =
   | { type: "choose"; prompt: string; options: string[]; answer: string }
   | { type: "build"; prompt: string; source: string; answer: string[]; bank: string[] }
   | { type: "blank"; prompt: string; sentence: string; options: string[]; answer: string }
-  | { type: "type"; prompt: string; source: string; accepted: string[] };
+  | { type: "type"; prompt: string; source: string; accepted: string[] }
+  | { type: "listen"; prompt: string; text: string };
 
 export type Lesson = { id: string; title: string; questions: Question[] };
 export type Unit = { id: string; title: string; subtitle: string; color: string; lessons: Lesson[] };
@@ -15,6 +16,7 @@ const choose = (prompt: string, answer: string, ...others: string[]): Question =
   answer,
   options: [answer, ...others],
 });
+const listen = (text: string): Question => ({ type: "listen", prompt: "Type what you hear", text });
 const build = (answer: string, source: string, extra: string[]): Question => ({
   type: "build",
   prompt: "Translate this sentence",
@@ -40,6 +42,7 @@ export const units: Unit[] = [
           build("My name is Ali", "Benim adım Ali", ["your", "She", "are"]),
           { type: "type", prompt: "Type this in English", source: "Teşekkür ederim", accepted: ["thank you", "thanks", "thank you very much"] },
           choose('Which reply fits "How are you?"', "I am fine, thanks.", "It is red.", "I have a dog.", "At six o'clock."),
+          listen("Nice to meet you"),
         ],
       },
       {
@@ -72,6 +75,7 @@ export const units: Unit[] = [
           choose('"They are my parents." means:', "Onlar benim ebeveynlerim.", "Onlar benim arkadaşlarım.", "Biz kardeşiz.", "O benim öğretmenim."),
           { type: "type", prompt: "Type this in English", source: "Benim iki kardeşim var", accepted: ["i have two brothers", "i have two siblings"] },
           choose("Choose the correct sentence", "We have a big family.", "We has a big family.", "We is a big family.", "We have big a family."),
+          listen("I have a big family"),
         ],
       },
       {
@@ -116,6 +120,7 @@ export const units: Unit[] = [
           choose('Which word means "hesap" at a restaurant?', "bill", "menu", "waiter", "table"),
           { type: "type", prompt: "Type this in English", source: "Bir su alabilir miyim?", accepted: ["can i have a water", "can i have some water", "can i have water", "could i have a water", "could i have some water"] },
           choose("Choose the correct sentence", "How much is this sandwich?", "How many is this sandwich?", "How much are this sandwich?", "How is much this sandwich?"),
+          listen("Can I have the bill please"),
         ],
       },
     ],

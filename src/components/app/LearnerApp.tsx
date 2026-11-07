@@ -117,6 +117,11 @@ export default function LearnerApp() {
     const pct = Math.round((done.result.correct / done.result.total) * 100);
     return (
       <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col items-center justify-center gap-5 px-4 text-center">
+        <div aria-hidden="true">
+          {Array.from({ length: 36 }, (_, i) => (
+            <span key={i} className="confetti-piece" style={{ left: `${(i * 37) % 100}%`, background: ["#15803d", "#fcd34d", "#0f766e", "#fb7185"][i % 4], animationDelay: `${(i % 9) * 0.12}s` }} />
+          ))}
+        </div>
         <Trophy aria-hidden="true" className="h-20 w-20 text-accent" />
         <h1 className="text-3xl font-extrabold">Lesson complete!</h1>
         <p className="text-lg text-muted">{done.lesson.title}</p>
@@ -161,6 +166,23 @@ export default function LearnerApp() {
 
         {tab === "learn" && (
           <>
+            <div className="card mb-3" aria-label="This week">
+              <p className="text-base font-bold">{streak}-day streak</p>
+              <ul className="mt-2 flex justify-between" aria-label="Last 7 days">
+                {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => {
+                  const filled = i < 6 || doneToday;
+                  const today = i === 6;
+                  return (
+                    <li key={i} className="flex flex-col items-center gap-1 text-sm font-bold text-muted">
+                      <span className={`flex h-9 w-9 items-center justify-center rounded-full border-2 ${filled ? "border-accent bg-accent text-onaccent" : "border-line"} ${today ? "ring-2 ring-primary" : ""}`} aria-label={`${d}${today ? " (today)" : ""}: ${filled ? "practiced" : "not yet"}`}>
+                        {filled ? <Flame aria-hidden="true" className="h-5 w-5" /> : null}
+                      </span>
+                      {d}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
             <div className="card mb-6">
               <p className="text-base font-bold">Daily goal: {Math.min(xp, DAILY_GOAL_XP)}/{DAILY_GOAL_XP} XP</p>
               <div className="mt-2 h-3 rounded-full bg-surface2" role="progressbar" aria-label="Daily goal" aria-valuemin={0} aria-valuemax={DAILY_GOAL_XP} aria-valuenow={Math.min(xp, DAILY_GOAL_XP)}>
@@ -264,7 +286,7 @@ export default function LearnerApp() {
               <button className="btn btn-primary !min-h-[48px]" onClick={accept}>{offer.offer.cta}</button>
               <button className="btn !min-h-[48px]" onClick={() => setOffer(null)} autoFocus>Not now</button>
             </div>
-            <p className="mt-2 text-sm text-muted">One tap, dismissible, no penalty. Shown once a week at most.</p>
+            <p className="mt-2 text-sm text-muted">You are seeing this because you just reached a milestone, not because of a paywall. One tap, dismissible, no penalty, once a week at most.</p>
           </div>
         </div>
       )}
