@@ -4,7 +4,12 @@ An interactive concept demo by **Team Veritas** (Pertevniyal Highschool) for the
 
 > **Disclaimer:** Concept prototype by Team Veritas, Pertevniyal Highschool, for HCGCC 2026. Not affiliated with Duolingo. All projections are team estimates. The case company is named in text only; no logos, mascots or artwork are used. No payments, logins, cookies, tracking or analytics. Everything runs in the browser.
 
-## What is in it
+## Routes
+
+- `/` : **Veritas English**, a playable learning-app concept (our own design): lesson path, real English questions (choose, word-bank translate, fill the blank, type), XP, streak, daily goal, plus the solution built in: moment-of-value offers with guardrails, Plans, local checkout mocks, and a Demo panel.
+- `/case` : the case analysis and impact model below.
+
+## What is in the case page (`/case`)
 
 1. Hero and headline stats
 2. Problem dashboard (Recharts): growth vs bookings, ARPDAU, list vs realized price

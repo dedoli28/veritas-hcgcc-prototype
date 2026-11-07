@@ -5,7 +5,7 @@ import { CreditCard, QrCode, Smartphone, Store, Wallet } from "lucide-react";
 import { markets, scoreLabels, type Market } from "@/data/levers";
 import { Dots, Est, Section } from "./ui";
 
-const flows: Record<Market["checkout"], { title: string; icon: typeof CreditCard; steps: string[] }> = {
+export const flows: Record<Market["checkout"], { title: string; icon: typeof CreditCard; steps: string[] }> = {
   card: { title: "Card or wallet", icon: CreditCard, steps: ["Choose plan", "Confirm in the store or processor’s secure sheet (no card fields here)", "Receipt and plan active"] },
   pix: { title: "Pix", icon: QrCode, steps: ["Choose plan", "Scan the QR code in your banking app", "Instant confirmation, plan active"] },
   oxxo: { title: "OXXO voucher", icon: Store, steps: ["Choose plan", "Get a voucher code to pay in cash at a store", "Pay at the counter; plan activates after payment clears"] },
@@ -13,7 +13,7 @@ const flows: Record<Market["checkout"], { title: string; icon: typeof CreditCard
   wallet: { title: "E-wallet or carrier billing", icon: Wallet, steps: ["Choose plan", "Approve in your e-wallet app, or add it to your phone bill", "Confirmation, plan active"] },
 };
 
-function FakeQr() {
+export function FakeQr() {
   // Deterministic decorative pattern, not a real QR code.
   const cells = Array.from({ length: 49 }, (_, i) => ((i * 7 + (i % 5) * 3) % 4 === 0 || i % 9 === 0));
   return (

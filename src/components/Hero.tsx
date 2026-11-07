@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight, Calculator, PlayCircle } from "lucide-react";
 import { baseFacts } from "@/data/case";
 
@@ -19,9 +20,9 @@ export default function Hero() {
           <strong className="text-fg">earn the upgrade, don’t gate the lesson</strong>. About $120M of annual run-rate by end-2028, with no friction brought back.
         </p>
         <div className="mt-7 flex flex-wrap gap-3">
-          <a href="#simulator" className="btn btn-primary">
-            <PlayCircle aria-hidden="true" className="h-5 w-5" /> Try the demo
-          </a>
+          <Link href="/" className="btn btn-primary">
+            <PlayCircle aria-hidden="true" className="h-5 w-5" /> Open the learning app
+          </Link>
           <a href="#impact" className="btn">
             <Calculator aria-hidden="true" className="h-5 w-5" /> See the impact model <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </a>
