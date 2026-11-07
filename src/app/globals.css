@@ -90,7 +90,8 @@
   --color-dsoft: var(--danger-soft);
   --color-warn: var(--warn);
   --color-wsoft: var(--warn-soft);
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-sans: "DIN Next Rounded", var(--font-nunito), system-ui, sans-serif;
+  --font-brand: "Feather Bold", var(--font-nunito), system-ui, sans-serif;
 }
 
 html {
@@ -105,7 +106,7 @@ html {
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-sans);
+  font-family: "DIN Next Rounded", var(--font-nunito), system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.55;
 }
@@ -193,4 +194,9 @@ input[type="range"] {
 .recharts-wrapper:focus,
 .recharts-surface:focus {
   outline: none;
+}
+
+.font-brand {
+  font-family: "Feather Bold", var(--font-nunito), system-ui, sans-serif;
+  font-weight: 800;
 }
