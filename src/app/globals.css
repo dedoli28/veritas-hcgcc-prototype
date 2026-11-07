@@ -200,3 +200,12 @@ input[type="range"] {
   font-family: "Feather Bold", var(--font-nunito), system-ui, sans-serif;
   font-weight: 800;
 }
+
+:root[data-theme="dark"] .veritas-logo {
+  filter: invert(1) hue-rotate(180deg);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .veritas-logo {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
