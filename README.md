@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Veritas Prototype (HCGCC 2026)
 
-## Getting Started
+An interactive concept demo by **Team Veritas** (Pertevniyal Highschool) for the HCGCC 2026 case competition, "Scaling Streaks, Sustaining Value". It shows how a language-learning company could turn a fast-growing base of daily learners into durable revenue without bringing friction back. Guiding principle: **earn the upgrade, don't gate the lesson.**
 
-First, run the development server:
+> **Disclaimer:** Concept prototype by Team Veritas, Pertevniyal Highschool, for HCGCC 2026. Not affiliated with Duolingo. All projections are team estimates. The case company is named in text only; no logos, mascots or artwork are used. No payments, logins, cookies, tracking or analytics. Everything runs in the browser.
+
+## What is in it
+
+1. Hero and headline stats
+2. Problem dashboard (Recharts): growth vs bookings, ARPDAU, list vs realized price
+3. **Moment-of-value simulator (S1)** with guardrails and an event log
+4. **Tier ladder (S2)** with an AI-cost-per-call slider (1 cent threshold)
+5. **Local pricing and payment (S3)**: six markets, rails, scores, checkout mocks
+6. **Impact calculator**: five levers, presets, per-market table
+7. Roadmap, KPI table with phase selector, experiment stop rules
+8. Risk matrix with tripwires
+9. SWOT and competitor cards
+10. About and sources
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm test         # Vitest: lever model and guardrail rules
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/data/     typed case data (case.ts, levers.ts, plan.ts)
+src/lib/      model.ts (lever and market maths), guardrails.ts (offer and test rules)
+src/lib/__tests__/   unit tests
+src/components/      one component per section
+src/app/      layout, page, icon, Open Graph image
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All computed values (totals, move roll-ups, market revenue, paid-share impact) are derived from the inputs in `src/data`, not hard-coded twice. At defaults the calculator reproduces 54.6 + 26.4 + 12.0 + 18.0 + 9.0 = **$120.0M** (S1 63.6, S2 38.4, S3 18.0; markets sum to $111.0M plus $9.0M free-learner purchases).
 
-## Learn More
+## Numbers: sources and assumptions
 
-To learn more about Next.js, take a look at the following resources:
+**Sources:** HCGCC 2026 regional case brief; the case company's Q2 2026 shareholder letter and 10-Q; third-party price trackers for US list prices (verify before relying).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Team assumptions (estimates, labelled in the UI):** market split of payers and revenue; per-payer prices ($65, $48, $30, $20, $12 a year); programme cost (~$24M) and FTE counts; upside not counted (~$23M) and web-checkout gross profit (~$20M); illustrative tier feature lists; qualitative market scores; KPI targets.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Derived:** ARPDAU = total bookings / (DAU × 91 days). Base = Q2 2026 revenue $298.5M × 4. Run-rate gross profit = $120M × 72.6% ≈ $87M.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT, see [LICENSE](LICENSE).
