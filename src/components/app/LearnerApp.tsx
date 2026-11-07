@@ -137,7 +137,7 @@ export default function LearnerApp() {
     <div className="flex min-h-[100dvh] flex-col">
       <header className="sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-2 px-4 py-2">
-          <span className="flex items-center gap-2 font-brand text-xl text-primary"><Logo size={34} />Veritas English</span>
+          <span className="flex items-center gap-2 font-brand text-xl text-primary"><Logo height={26} />English</span>
           <div className="flex items-center gap-3 text-base font-bold">
             <span className="flex items-center gap-1" aria-label={`${streak} day streak`}><Flame aria-hidden="true" className="h-5 w-5 text-accent" />{streak}</span>
             <span className="flex items-center gap-1" aria-label={`${xp} XP today`}><Star aria-hidden="true" className="h-5 w-5 text-accent" />{xp}</span>
