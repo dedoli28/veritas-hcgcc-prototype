@@ -173,7 +173,7 @@ export default function LearnerApp() {
   const tabs: [Tab, string, typeof BookOpen][] = [["learn", "Learn", BookOpen], ["plans", "Plans", Crown], ["profile", "Profile", User]];
 
   return (
-    <div className={`flex min-h-[100dvh] flex-col ${back ? "screen-left" : "screen-up"}`}>
+    <div className="m-backdrop flex min-h-[100dvh] flex-col">
       <header className="safe-t sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-2 px-4 py-2.5">
           <span className="flex items-center gap-2 font-brand text-xl text-primary"><Logo height={26} />English</span>
@@ -190,7 +190,7 @@ export default function LearnerApp() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-32 pt-5">
+      <main className={`mx-auto w-full max-w-2xl flex-1 px-4 pb-32 pt-5 ${back ? "screen-left" : ""}`}>
         {toast && (
           <Collapse show={dismissed !== toast}>
             <p className="m-item mb-4 flex items-start justify-between gap-2 rounded-xl bg-wsoft p-3 text-base font-semibold text-warn" role="status">
@@ -386,6 +386,13 @@ export default function LearnerApp() {
             <button className="btn" onClick={() => nextDay(1)}>+1 day</button>
             <button className="btn" onClick={() => nextDay(7)}>+7 days</button>
             <div className="flex w-full items-center justify-between rounded-xl border border-line px-3 py-2"><span className="text-base font-semibold">Minor profile</span><Toggle checked={minor} onChange={() => setMinor((v) => !v)} label="Minor profile" /></div>
+            <div className="flex w-full items-center justify-between rounded-xl border border-line px-3 py-2">
+              <span className="text-base font-semibold">Streak: {streak}</span>
+              <span className="flex gap-2">
+                <button className="btn !min-h-[44px] !px-4" aria-label="Decrease streak" onClick={() => setStreak((v) => Math.max(0, v - 1))}>−</button>
+                <button className="btn !min-h-[44px] !px-4" aria-label="Increase streak" onClick={() => setStreak((v) => v + 1)}>+</button>
+              </span>
+            </div>
             <button className="btn" onClick={() => { setStreak(30); setDemo(false); fire("streak30"); }}>Reach a 30-day streak</button>
             <button className="btn" onClick={() => fire("midlesson")}>Try an offer mid-lesson</button>
             <button className="btn" onClick={() => { setLastOfferDay(null); setLog([]); }}>Reset offers</button>

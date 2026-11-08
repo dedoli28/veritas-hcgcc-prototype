@@ -33,32 +33,43 @@ export function Reveal({ children, className = "", style }: { children: ReactNod
 export function CountUp({ value, start }: { value: number; start?: number }) {
   const reduced = useReducedMotion();
   const [shown, setShown] = useState(start ?? value);
-  const prev = useRef(start ?? value);
+  const shownRef = useRef(start ?? value);
   const [bump, setBump] = useState(0);
 
   useEffect(() => {
-    if (prev.current === value) return;
-    const from = prev.current;
-    prev.current = value;
+    const from = shownRef.current;
+    if (from === value) return;
+    const set = (v: number) => {
+      shownRef.current = v;
+      setShown(v);
+    };
     if (reduced) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setShown(value);
+      set(value);
       return;
     }
-    setBump((b) => b + 1);
     let raf = 0;
+    let bumped = false;
     const t0 = performance.now();
     const tick = (t: number) => {
+      if (!bumped) {
+        bumped = true;
+        setBump((b) => b + 1);
+      }
       const p = Math.min(1, (t - t0) / 400);
-      setShown(Math.round(from + (value - from) * (1 - Math.pow(1 - p, 3))));
+      set(Math.round(from + (value - from) * (1 - Math.pow(1 - p, 3))));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    // Guarantee the final value even if frames are throttled (hidden tab) or the effect is re-run.
+    const done = setTimeout(() => set(value), 450);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(done);
+    };
   }, [value, reduced]);
 
   return (
-    <span key={bump} className={`inline-block ${bump ? "m-bump" : ""}`}>
+    <span key={bump} className={`inline-block ${bump ? "m-bump" : ""}`} aria-hidden="true">
       {shown}
     </span>
   );
