@@ -23,6 +23,12 @@ export function isCorrect(q: Question, answer: string | string[]): boolean {
 export const correctText = (q: Question): string =>
   q.type === "build" ? q.answer.join(" ") : q.type === "type" ? q.accepted[0] : q.type === "listen" ? q.text : q.answer;
 
+/** Streak after `days` simulated days pass. Missing any full day without practice resets it to 0. */
+export function streakAfterDays(streak: number, practicedToday: boolean, days: number): number {
+  const missed = days > 1 || !practicedToday;
+  return missed ? 0 : streak;
+}
+
 export const DAILY_GOAL_XP = 20;
 export const XP_PER_LESSON = 10;
 export const XP_PER_CORRECT = 2;

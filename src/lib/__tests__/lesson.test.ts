@@ -1,6 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { allLessons } from "@/data/course";
-import { isCorrect, normalize, shuffle } from "../lesson";
+import { isCorrect, normalize, shuffle, streakAfterDays } from "../lesson";
+
+describe("streak over time", () => {
+  it("keeps the streak when you practiced today and one day passes", () => {
+    expect(streakAfterDays(12, true, 1)).toBe(12);
+  });
+  it("resets when a day passes without practice", () => {
+    expect(streakAfterDays(12, false, 1)).toBe(0);
+  });
+  it("resets when several days pass, even if today was practiced", () => {
+    expect(streakAfterDays(12, true, 7)).toBe(0);
+    expect(streakAfterDays(30, false, 7)).toBe(0);
+  });
+});
 
 describe("answer checking", () => {
   it("normalizes case, punctuation and spacing", () => {

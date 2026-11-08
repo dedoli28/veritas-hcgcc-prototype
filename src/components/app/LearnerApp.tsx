@@ -7,7 +7,7 @@ import { units, allLessons, type Lesson } from "@/data/course";
 import { markets } from "@/data/levers";
 import { FOOTER_TEXT } from "@/data/case";
 import { evaluateOffer, moments, type Moment, type MomentId } from "@/lib/guardrails";
-import { DAILY_GOAL_XP, XP_PER_CORRECT, XP_PER_LESSON } from "@/lib/lesson";
+import { DAILY_GOAL_XP, XP_PER_CORRECT, XP_PER_LESSON, streakAfterDays } from "@/lib/lesson";
 import { flows, FakeQr } from "@/components/LocalPricing";
 import Logo from "@/components/Logo";
 import { isMuted, play, setMuted } from "@/lib/sound";
@@ -138,6 +138,11 @@ export default function LearnerApp() {
   };
 
   const nextDay = (n: number) => {
+    const next = streakAfterDays(streak, doneToday, n);
+    if (next !== streak) {
+      setStreak(next);
+      setToast(`Streak lost: ${n > 1 ? `${n} days passed` : "a day passed"} without practice. Finish a lesson to start a new one.`);
+    }
     setDay((d) => d + n);
     setDoneToday(false);
     setXp(0);
@@ -206,7 +211,7 @@ export default function LearnerApp() {
               <p className="text-base font-bold">{streak}-day streak</p>
               <ul className="mt-2 flex justify-between" aria-label="Last 7 days">
                 {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => {
-                  const filled = i < 6 || doneToday;
+                  const filled = i < 6 ? streak >= 6 - i : doneToday;
                   const today = i === 6;
                   return (
                     <li key={i} className="flex flex-col items-center gap-1 text-sm font-bold text-muted">
