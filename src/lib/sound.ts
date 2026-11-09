@@ -1,4 +1,4 @@
-/** Tiny synthesized sound effects (Web Audio). No audio files, no network. */
+/** Tiny synthesized sound effects (Web Audio) and speech (Web Speech). No audio files, no network. */
 
 let ctx: AudioContext | null = null;
 let muted = false;
@@ -58,14 +58,89 @@ export function play(name: Sfx) {
   }
 }
 
-export const canSpeak = () => typeof window !== "undefined" && "speechSynthesis" in window;
+/* ---------- Speech ---------- */
 
-/** Reads English text aloud with the browser's built-in speech synthesis. */
-export function speak(text: string, slow = false) {
+export const canSpeak = () => typeof window !== "undefined" && "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+
+let voices: SpeechSynthesisVoice[] = [];
+let voicesBound = false;
+// Keep a reference: some mobile browsers garbage-collect an utterance mid-speech and never finish.
+let current: SpeechSynthesisUtterance | null = null;
+
+function loadVoices() {
   if (!canSpeak()) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "en-US";
-  u.rate = slow ? 0.6 : 0.95;
+  voices = window.speechSynthesis.getVoices();
+  if (!voicesBound) {
+    voicesBound = true;
+    // Android Chrome fills the voice list asynchronously.
+    window.speechSynthesis.addEventListener?.("voiceschanged", () => {
+      voices = window.speechSynthesis.getVoices();
+    });
+  }
+}
+
+function pickVoice(): SpeechSynthesisVoice | undefined {
+  const en = voices.filter((v) => v.lang.toLowerCase().replace("_", "-").startsWith("en"));
+  return en.find((v) => /^en-us$/i.test(v.lang.replace("_", "-")) && v.localService) ?? en.find((v) => /^en-us$/i.test(v.lang.replace("_", "-"))) ?? en[0];
+}
+
+/** Call from a tap handler (for example when opening a lesson) so iOS and Android allow speech later. */
+export function unlockSpeech() {
+  if (!canSpeak()) return;
+  loadVoices();
+  const u = new SpeechSynthesisUtterance(" ");
+  u.volume = 0;
   window.speechSynthesis.speak(u);
+}
+
+/**
+ * Reads English text aloud. Must be called from a user gesture (tap).
+ * `onFail` runs if the device cannot or will not speak (no voice, silent mode, blocked).
+ */
+export function speak(text: string, slow = false, onFail?: () => void) {
+  if (!canSpeak()) {
+    onFail?.();
+    return;
+  }
+  const synth = window.speechSynthesis;
+  loadVoices();
+
+  const start = () => {
+    const u = new SpeechSynthesisUtterance(text);
+    current = u;
+    const v = pickVoice();
+    if (v) {
+      u.voice = v;
+      u.lang = v.lang;
+    } else {
+      u.lang = "en-US";
+    }
+    u.rate = slow ? 0.65 : 1;
+    u.pitch = 1;
+    u.volume = 1;
+    let started = false;
+    u.onstart = () => {
+      started = true;
+    };
+    u.onerror = (e) => {
+      if (e.error !== "canceled" && e.error !== "interrupted") onFail?.();
+    };
+    u.onend = () => {
+      if (current === u) current = null;
+    };
+    synth.speak(u);
+    // If nothing started shortly after, tell the UI so the lesson is never stuck.
+    setTimeout(() => {
+      if (!started && !synth.speaking) onFail?.();
+    }, 3000);
+  };
+
+  if (synth.paused) synth.resume();
+  if (synth.speaking || synth.pending) {
+    // Cancelling and speaking in the same tick silently fails on Chrome for Android and iOS.
+    synth.cancel();
+    setTimeout(start, 80);
+  } else {
+    start();
+  }
 }

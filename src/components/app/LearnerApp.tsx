@@ -10,7 +10,7 @@ import { evaluateOffer, moments, type Moment, type MomentId } from "@/lib/guardr
 import { DAILY_GOAL_XP, XP_PER_CORRECT, XP_PER_LESSON, streakAfterDays } from "@/lib/lesson";
 import { flows, FakeQr } from "@/components/LocalPricing";
 import Logo from "@/components/Logo";
-import { isMuted, play, setMuted } from "@/lib/sound";
+import { isMuted, play, setMuted, unlockSpeech } from "@/lib/sound";
 import { CheckDraw, Collapse, CountUp, Reveal, SmoothBar, Toggle } from "./motion";
 import LessonPlayer, { type LessonResult } from "./LessonPlayer";
 
@@ -248,7 +248,7 @@ export default function LearnerApp() {
                         )}
                         <button
                           aria-disabled={!open}
-                          onClick={() => { if (open) { setBack(false); setLesson(l); } else shakeLocked(l.id); }}
+                          onClick={() => { if (open) { unlockSpeech(); setBack(false); setLesson(l); } else shakeLocked(l.id); }}
                           aria-label={`${l.title}${isDone ? " (completed)" : open ? "" : " (locked)"}`}
                           className={`flex h-20 w-20 items-center justify-center rounded-full border-b-8 text-onprimary ${shakeId === l.id ? "m-shake-sm" : ""} ${open && !isDone ? "m-bob" : ""} ${isDone ? "border-black/25 bg-accent !text-onaccent" : open ? "border-black/25 bg-primary" : "border-line bg-surface2 !text-muted"}`}
                         >

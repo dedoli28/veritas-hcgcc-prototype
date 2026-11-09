@@ -20,6 +20,7 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
   const [picked, setPicked] = useState("");
   const [typed, setTyped] = useState("");
   const [words, setWords] = useState<string[]>([]);
+  const [audioFailed, setAudioFailed] = useState(false);
 
   const qi = queue[pos];
   const q = lesson.questions[qi];
@@ -51,6 +52,7 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
       return;
     }
     setPos(pos + 1);
+    setAudioFailed(false);
     setStatus("answering");
     setPicked("");
     setTyped("");
@@ -124,17 +126,25 @@ export default function LessonPlayer({ lesson, onExit, onFinish }: { lesson: Les
 
         {q.type === "listen" && (
           <>
-            {canSpeak() ? (
+            {canSpeak() && !audioFailed ? (
               <div className="mt-6 flex gap-3">
-                <button className="btn btn-primary !min-h-[64px] flex-1 text-lg" onClick={() => speak(q.text)}>
+                <button className="btn btn-primary !min-h-[64px] flex-1 text-lg" onClick={() => speak(q.text, false, () => setAudioFailed(true))}>
                   <Volume2 aria-hidden="true" className="h-6 w-6" /> Play
                 </button>
-                <button className="btn !min-h-[64px]" onClick={() => speak(q.text, true)} aria-label="Play slowly">
+                <button className="btn !min-h-[64px]" onClick={() => speak(q.text, true, () => setAudioFailed(true))} aria-label="Play slowly">
                   <Snail aria-hidden="true" className="h-6 w-6" /> Slow
                 </button>
               </div>
             ) : (
-              <p className="mt-6 rounded-2xl border-2 border-dashed border-line p-4 text-base">Audio is not available in this browser. The sentence is: <strong>{q.text}</strong></p>
+              <div className="mt-6 rounded-2xl border-2 border-dashed border-line p-4 text-base" role="status">
+                <p>We could not play audio on this device. Check that your volume is up and silent mode is off, then try again. For now, here is the sentence:</p>
+                <p className="mt-2 text-xl font-extrabold">{q.text}</p>
+                {canSpeak() && (
+                  <button className="btn mt-3" onClick={() => { setAudioFailed(false); speak(q.text, false, () => setAudioFailed(true)); }}>
+                    <Volume2 aria-hidden="true" className="h-5 w-5" /> Try audio again
+                  </button>
+                )}
+              </div>
             )}
             <label className="mt-4 block text-base font-semibold" htmlFor="typed">What did you hear?</label>
             <input id="typed" value={typed} disabled={locked} onChange={(e) => setTyped(e.target.value)} onKeyDown={submitOnEnter} autoComplete="off" autoCapitalize="off" spellCheck={false} className="mt-1 w-full rounded-2xl border-2 border-line bg-surface p-4 text-lg" placeholder="Type in English" />
