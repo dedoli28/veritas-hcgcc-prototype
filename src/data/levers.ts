@@ -36,7 +36,7 @@ export type Market = {
   tier: string;
   /** user scale, price headroom, conversion gap, payment readiness (1–4) */
   scores: [number, number, number, number];
-  checkout: "card" | "pix" | "oxxo" | "upi" | "wallet";
+  checkout: "card" | "pix" | "oxxo" | "upi" | "wallet" | "tr";
 };
 
 export const markets: Market[] = [
@@ -46,6 +46,15 @@ export const markets: Market[] = [
   { id: "jpde", name: "Japan, Germany", moment: 0.14, max: 0.1, family: 0.08, lite: 0, wave: 2, rail: "Card and e-wallet", railDetail: "Card plus local e-wallets", tier: "Super, Max, Family", scores: [2, 4, 3, 3], checkout: "wallet" },
   { id: "india", name: "India", moment: 0.05, max: 0.01, family: 0.01, lite: 0.25, wave: 3, rail: "UPI", railDetail: "Instant payment from a bank-linked app, plus carrier billing", tier: "Super Lite (ad-led)", scores: [4, 1, 4, 3], checkout: "upi" },
   { id: "indonesia", name: "Indonesia", moment: 0.05, max: 0.01, family: 0, lite: 0.15, wave: 3, rail: "E-wallet and carrier billing", railDetail: "E-wallet balance or the phone bill", tier: "Super Lite (ad-led)", scores: [4, 1, 4, 2], checkout: "wallet" },
+];
+
+/**
+ * Markets shown in the app's checkout mock. Turkey is the team's home market: it is NOT part of the
+ * $120M lever model or the market table above, so volumes are zero and it never affects the totals.
+ */
+export const appMarkets: Market[] = [
+  ...markets,
+  { id: "turkey", name: "Turkey", moment: 0, max: 0, family: 0, lite: 0, wave: 3, rail: "Papara and ininal", railDetail: "Local e-wallet and prepaid-card apps", tier: "Super Lite, Super", scores: [3, 2, 3, 3], checkout: "tr" },
 ];
 
 export const scoreLabels = ["User scale", "Price headroom", "Conversion gap", "Payment readiness"] as const;

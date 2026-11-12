@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Check, Volume2, VolumeX, Crown, FlaskConical, Flame, Lock, Moon, Star, Sun, Trophy, User, X } from "lucide-react";
 import { units, allLessons, type Lesson } from "@/data/course";
-import { markets } from "@/data/levers";
+import { appMarkets } from "@/data/levers";
 import { FOOTER_TEXT } from "@/data/case";
 import { evaluateOffer, moments, type Moment, type MomentId } from "@/lib/guardrails";
 import { DAILY_GOAL_XP, XP_PER_CORRECT, XP_PER_LESSON, streakAfterDays } from "@/lib/lesson";
@@ -44,9 +44,10 @@ export default function LearnerApp() {
   const [demo, setDemo] = useState(false);
   const [highlight, setHighlight] = useState("");
   const [checkout, setCheckout] = useState<string | null>(null);
-  const [market, setMarket] = useState(markets[1].id);
+  const [market, setMarket] = useState("turkey");
   const [step, setStep] = useState(0);
   const [mute, setMute] = useState(false);
+  const [trWallet, setTrWallet] = useState("Papara");
   const [back, setBack] = useState(false);
   const [shakeId, setShakeId] = useState("");
   const [leaving, setLeaving] = useState(false);
@@ -351,7 +352,7 @@ export default function LearnerApp() {
       )}
 
       {checkout && (() => {
-        const m = markets.find((x) => x.id === market)!;
+        const m = appMarkets.find((x) => x.id === market)!;
         const flow = flows[m.checkout];
         const last = step === flow.steps.length - 1;
         return (
@@ -365,13 +366,23 @@ export default function LearnerApp() {
               <p className="text-sm text-muted">No real payment, nothing collected.</p>
               <label htmlFor="mk" className="mt-3 block text-base font-bold">Your market</label>
               <select id="mk" value={market} onChange={(e) => { setMarket(e.target.value); setStep(0); }} className="mt-1 w-full rounded-xl border-2 border-line bg-surface p-3 text-base">
-                {markets.map((x) => <option key={x.id} value={x.id}>{x.name} ({x.rail})</option>)}
+                {appMarkets.map((x) => <option key={x.id} value={x.id}>{x.name} ({x.rail})</option>)}
               </select>
               <ol className="mt-3 space-y-2">
                 {flow.steps.map((s, i) => (
                   <li key={s} className={`rounded-lg border p-3 text-base ${i === step ? "border-primary bg-psoft font-semibold" : "border-line text-muted"}`}>{i + 1}. {s}</li>
                 ))}
               </ol>
+              {m.checkout === "tr" && step === 1 && (
+                <div className="mt-3" role="radiogroup" aria-label="Wallet">
+                  <div className="flex gap-2">
+                    {["Papara", "ininal"].map((w) => (
+                      <button key={w} role="radio" aria-checked={trWallet === w} className="btn flex-1" onClick={() => setTrWallet(w)}>{w}</button>
+                    ))}
+                  </div>
+                  <p className="mt-2 rounded-lg border border-dashed border-line p-2 text-base">Demo: approve the payment request in {trWallet}. Nothing is charged.</p>
+                </div>
+              )}
               {m.checkout === "pix" && step === 1 && <div className="mt-3"><FakeQr /></div>}
               {m.checkout === "oxxo" && step === 1 && <p className="mt-3 rounded-lg border border-dashed border-line p-2 font-mono text-base">DEMO 0000 0000 0000</p>}
               {last ? <p className="mt-3 font-bold text-primary" role="status">Done (simulated). Nothing was charged.</p> : <button className="btn btn-primary mt-3 w-full" onClick={() => setStep(step + 1)}>Next step</button>}

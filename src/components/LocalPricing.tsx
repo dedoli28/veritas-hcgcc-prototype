@@ -10,6 +10,7 @@ export const flows: Record<Market["checkout"], { title: string; icon: typeof Cre
   pix: { title: "Pix", icon: QrCode, steps: ["Choose plan", "Scan the QR code in your banking app", "Instant confirmation, plan active"] },
   oxxo: { title: "OXXO voucher", icon: Store, steps: ["Choose plan", "Get a voucher code to pay in cash at a store", "Pay at the counter; plan activates after payment clears"] },
   upi: { title: "UPI", icon: Smartphone, steps: ["Choose plan", "Approve the request in your UPI app", "Confirmation, plan active"] },
+  tr: { title: "Papara or ininal", icon: Wallet, steps: ["Choose plan", "Pick Papara or ininal and approve the payment in the app", "Confirmation, plan active"] },
   wallet: { title: "E-wallet or carrier billing", icon: Wallet, steps: ["Choose plan", "Approve in your e-wallet app, or add it to your phone bill", "Confirmation, plan active"] },
 };
 
